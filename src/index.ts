@@ -1,5 +1,8 @@
+import * as config from './config.js'
+
 function main() {
-  console.log("Hello, world!")
+  config.setUser("Tyler")
+  console.log(config.readConfig())
 }
 
 main()
