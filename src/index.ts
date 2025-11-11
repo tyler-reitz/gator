@@ -1,15 +1,17 @@
+
 import {
   type CommandRegistry,
   registerCommand,
   runCommand,
 } from "./commands/commands.js";
-import { handleLogin } from "./commands/user.js";
+import { handleLogin, handleRegister } from "./commands/user.js";
 
 const registry: CommandRegistry = {};
 
 registerCommand(registry, "login", handleLogin);
+registerCommand(registry, "register", handleRegister);
 
-function main() {
+async function main() {
   const [, , cmd, ...args] = process.argv;
 
   if (!cmd) {
@@ -18,7 +20,8 @@ function main() {
     process.exit(1);
   }
 
-  runCommand(registry, cmd, ...args);
+  await runCommand(registry, cmd, ...args);
 }
 
-main();
+await main();
+process.exit(0)
