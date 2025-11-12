@@ -13,6 +13,10 @@ export async function getUser(name: string) {
   return result
 }
 
+export async function getUsers() {
+  return await db.select().from(users)
+}
+
 export async function deleteUsers() {
   const result = await db.delete(users)
   console.log(result)
