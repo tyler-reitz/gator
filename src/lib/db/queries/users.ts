@@ -13,3 +13,7 @@ export async function getUser(name: string) {
   return result
 }
 
+export async function deleteUsers() {
+  const result = await db.delete(users)
+  console.log(result)
+}

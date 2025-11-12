@@ -1,6 +1,6 @@
 
 import { setUser } from "src/config";
-import { createUser, getUser } from "src/lib/db/queries/users";
+import { createUser, deleteUsers, getUser } from "src/lib/db/queries/users";
 
 export async function handleLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -33,3 +33,13 @@ export async function handleRegister(cmdName: string, ...args: string[]) {
     process.exit(1)
   }
 }
+
+export async function handleReset(cmdName: string, ...args: string[]) {
+  try {
+    await deleteUsers()
+  } catch (e) {
+    console.error((e as Error).message)
+    process.exit(1)
+  }
+}
+
