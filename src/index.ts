@@ -1,10 +1,15 @@
-
 import {
   type CommandRegistry,
   registerCommand,
   runCommand,
 } from "./commands/commands.js";
-import { handleLogin, handleRegister, handleReset, handleUsers } from "./commands/user.js";
+import { handleAgg } from "./commands/feed.js";
+import {
+  handleLogin,
+  handleRegister,
+  handleReset,
+  handleUsers,
+} from "./commands/user.js";
 
 const registry: CommandRegistry = {};
 
@@ -12,6 +17,7 @@ registerCommand(registry, "login", handleLogin);
 registerCommand(registry, "register", handleRegister);
 registerCommand(registry, "reset", handleReset);
 registerCommand(registry, "users", handleUsers);
+registerCommand(registry, "agg", handleAgg);
 
 async function main() {
   const [, , cmd, ...args] = process.argv;
@@ -26,4 +32,5 @@ async function main() {
 }
 
 await main();
-process.exit(0)
+process.exit(0);
+
