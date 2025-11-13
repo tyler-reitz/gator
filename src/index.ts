@@ -3,7 +3,7 @@ import {
   registerCommand,
   runCommand,
 } from "./commands/commands.js";
-import { handleAgg } from "./commands/feed.js";
+import { handleAddFeed, handleAgg } from "./commands/feed.js";
 import {
   handleLogin,
   handleRegister,
@@ -18,6 +18,7 @@ registerCommand(registry, "register", handleRegister);
 registerCommand(registry, "reset", handleReset);
 registerCommand(registry, "users", handleUsers);
 registerCommand(registry, "agg", handleAgg);
+registerCommand(registry, "addfeed", handleAddFeed);
 
 async function main() {
   const [, , cmd, ...args] = process.argv;
@@ -33,4 +34,3 @@ async function main() {
 
 await main();
 process.exit(0);
-

@@ -1,3 +1,6 @@
+import { readConfig } from "src/config";
+import { createFeed } from "src/lib/db/queries/feeds";
+import { getUser } from "src/lib/db/queries/users";
 import { fetchFeed } from "src/lib/http";
 
 export async function handleAgg(cmdName: string, ...args: string[]) {
@@ -17,4 +20,12 @@ export async function handleAgg(cmdName: string, ...args: string[]) {
       [],
     ),
   });
+}
+
+export async function handleAddFeed(cmdName: string, ...args: [string, string]) {
+  const config = readConfig()
+
+  const user = await getUser(config.currentUserName)
+
+  await createFeed(...args, user)
 }

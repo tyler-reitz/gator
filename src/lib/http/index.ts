@@ -10,7 +10,7 @@ export type RSSItem = {
 export type RSSFeed = {
   channel: {
     title: string;
-    linke: string;
+    link: string;
     description: string;
     item: RSSItem[];
   }
