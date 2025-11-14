@@ -1,6 +1,7 @@
 import { db } from "src/lib/db";
-import { feeds, SelectUser } from "src/lib/db/schema";
+import { feeds, SelectUser, users } from "src/lib/db/schema";
 import { printFeed } from "../schema";
+import { eq } from "drizzle-orm";
 
 export async function createFeed(name: string, url: string, user: SelectUser) {
   const [feed] = await db
@@ -10,4 +11,8 @@ export async function createFeed(name: string, url: string, user: SelectUser) {
     .onConflictDoNothing();
 
   printFeed(feed, user);
+}
+
+export async function getFeeds() {
+  return await db.select().from(feeds).leftJoin(users, eq(feeds.user_id, users.id))
 }
