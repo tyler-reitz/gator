@@ -1,14 +1,24 @@
+import { SelectUser } from "src/lib/db/schema";
 
-export type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>
+export type CommandHandler = (
+  cmdName: string,
+  ...args: string[]
+) => Promise<void>;
 
-export type CommandRegistry = Record<string, CommandHandler>
+export type UserCommandHandler = (
+  cmdName: string,
+  user: SelectUser,
+  ...args: string[]
+) => Promise<void>;
+
+export type CommandRegistry = Record<string, CommandHandler>;
 
 export function registerCommand(
   registry: CommandRegistry,
   cmdName: string,
   handler: CommandHandler,
 ) {
-  registry[cmdName]=handler
+  registry[cmdName] = handler;
 }
 
 export async function runCommand(
@@ -17,10 +27,9 @@ export async function runCommand(
   ...args: string[]
 ) {
   try {
-    await registry[cmdName](cmdName, ...args)
+    await registry[cmdName](cmdName, ...args);
   } catch (e) {
-    console.error((e as Error))
-    process.exit(1)
+    console.error(e as Error);
+    process.exit(1);
   }
 }
-
