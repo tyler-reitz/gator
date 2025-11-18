@@ -1,5 +1,4 @@
-import { pgTable, timestamp, uuid, text } from "drizzle-orm/pg-core";
-import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
+import { pgTable, timestamp, uuid, text, unique } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -11,8 +10,8 @@ export const users = pgTable("users", {
   name: text("name").notNull().unique(),
 });
 
-export type SelectUser = typeof users.$inferSelect
-export type InsertUser = typeof users.$inferInsert
+export type SelectUser = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
 
 export const feeds = pgTable("feeds", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -28,9 +27,31 @@ export const feeds = pgTable("feeds", {
     .notNull(),
 });
 
-export type SelectFeed = typeof feeds.$inferSelect
-export type InsertFeed = typeof feeds.$inferInsert
+export type SelectFeed = typeof feeds.$inferSelect;
+export type InsertFeed = typeof feeds.$inferInsert;
 
-export function printFeed(feed: SelectFeed|InsertFeed, user: SelectUser|InsertUser) {
-  console.log(feed, user)
+export function printFeed(
+  feed: SelectFeed | InsertFeed,
+  user: SelectUser | InsertUser,
+) {
+  console.log(feed, user);
 }
+
+export const feedFollows = pgTable(
+  "feed_follows",
+  {
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
+    createdAt: timestamp("created-at").notNull().defaultNow(),
+    updatedAt: timestamp("updated-at")
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+    users_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    feed_id: uuid("feed_id")
+      .notNull()
+      .references(() => feeds.id, { onDelete: "cascade" }),
+  },
+  (t) => [unique().on(t.users_id, t.feed_id)],
+);

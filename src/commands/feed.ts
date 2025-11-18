@@ -1,6 +1,8 @@
 import { readConfig } from "src/config";
+import { createFeedFollows } from "src/lib/db/queries/feedFollows";
 import { createFeed, getFeeds } from "src/lib/db/queries/feeds";
 import { getUser, getUserById } from "src/lib/db/queries/users";
+import { printFeed } from "src/lib/db/schema";
 import { fetchFeed } from "src/lib/http";
 
 export async function handleAgg(cmdName: string, ...args: string[]) {
@@ -26,8 +28,10 @@ export async function handleAddFeed(cmdName: string, ...args: [string, string]) 
   const config = readConfig()
 
   const user = await getUser(config.currentUserName)
+  const feed = await createFeed(...args, user)
 
-  await createFeed(...args, user)
+  await createFeedFollows(user, feed)
+  printFeed(feed, user)
 }
 
 export async function handleFeeds(cmdName: string, ...args: string[]) {

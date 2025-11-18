@@ -19,7 +19,7 @@ export async function runCommand(
   try {
     await registry[cmdName](cmdName, ...args)
   } catch (e) {
-    console.error((e as Error).message)
+    console.error((e as Error))
     process.exit(1)
   }
 }
