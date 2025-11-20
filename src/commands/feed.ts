@@ -1,27 +1,37 @@
 import { readConfig } from "src/config";
 import { createFeedFollows } from "src/lib/db/queries/feedFollows";
-import { createFeed, getFeeds } from "src/lib/db/queries/feeds";
+import { createFeed, getFeeds, getNextFeedToFetch, markFetched } from "src/lib/db/queries/feeds";
+import { createPosts } from "src/lib/db/queries/posts";
 import { getUser, getUserById } from "src/lib/db/queries/users";
-import { printFeed, SelectUser } from "src/lib/db/schema";
+import { printFeed, SelectFeed, SelectUser } from "src/lib/db/schema";
 import { fetchFeed } from "src/lib/http";
 
 export async function handleAgg(cmdName: string, ...args: string[]) {
-  const rss = await fetchFeed("https://www.wagslane.dev/index.xml");
+  await scrapeFeed()
 
-  const { item = [], title, description, link } = rss.channel;
+  const intervalId = setInterval(async () => {
+    await scrapeFeed()
+  }, 3000)
 
-  console.log({
-    title,
-    description,
-    link,
-    item: item.reduce(
-      (acc, { title, link, description }) => [
-        ...acc,
-        { title, link, description },
-      ],
-      [],
-    ),
-  });
+  await new Promise((resolve) => {
+    process.on('exit', () => {
+      console.log('cleaning up')
+      clearInterval(intervalId)
+      process.exit(0)
+    })
+  })
+}
+
+export async function scrapeFeed() {
+  const feed = await getNextFeedToFetch()
+  console.log(feed)
+
+  const rss = await fetchFeed(feed.url)
+  console.log(rss)
+
+  await markFetched(feed)
+
+  await createPosts(rss.channel.item, feed)
 }
 
 export async function handleAddFeed(cmdName: string, user: SelectUser, ...args: [string, string]) {

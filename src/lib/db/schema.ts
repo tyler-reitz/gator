@@ -25,6 +25,7 @@ export const feeds = pgTable("feeds", {
   user_id: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
+  lastFetchedAt: timestamp("last_fetched_at"),
 });
 
 export type SelectFeed = typeof feeds.$inferSelect;
@@ -36,6 +37,25 @@ export function printFeed(
 ) {
   console.log(feed, user);
 }
+
+export const post = pgTable("post", {
+  id: uuid("id").primaryKey().defaultRandom().notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+  title: text("title").notNull().unique(),
+  url: text("url").notNull().unique(),
+  description: text("description").notNull(),
+  publishedAt: timestamp("published_at").notNull(),
+  feed_id: uuid("feed_id")
+    .references(() => feeds.id, { onDelete: "cascade" })
+    .notNull(),
+});
+
+export type SelectPost = typeof post.$inferSelect;
+export type InsertPost = typeof post.$inferInsert;
 
 export const feedFollows = pgTable(
   "feed_follows",
